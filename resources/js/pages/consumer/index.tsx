@@ -1,37 +1,40 @@
 import { Button } from '@/components/ui/button';
 
+import { DataTable } from '@/components/shared/data-table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Product, columns } from '../../components/product/columns';
-import { DataTable } from '../../components/shared/data-table';
+import { Consumer, columns } from '../../components/consumer/columns';
 // import DialogComponent from './modal';
 import { router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { DialogComponent } from '../../components/product/modal';
+import { DialogComponent } from '../../components/consumer/modal';
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Product',
-        href: '/product',
+        title: 'Consumer',
+        href: '/consumer',
     },
 ];
 export default function DemoPage() {
-    const { products } = usePage<{ products: Product[] }>().props;
+    const { consumers } = usePage<{ consumers: Consumer[] }>().props;
     const [open, setOpen] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [values, setValues] = useState({
-        product_name: '',
+        consumer_name: '',
+        phone: '',
+        email: '',
+        address: '',
     });
     useEffect(() => {
         if (!open) {
-            setValues({ product_name: '' });
+            setValues({ consumer_name: '', phone: '', email: '', address: '' });
         }
     }, [open]);
 
     // Reset values when the edit modal closes
     useEffect(() => {
         if (!openEdit) {
-            setValues({ product_name: '' });
+            setValues({ consumer_name: '', phone: '', email: '', address: '' });
         }
     }, [openEdit]);
 
@@ -45,14 +48,14 @@ export default function DemoPage() {
     }
     const handleSubmit = () => {
         // setName(e);
-        router.post(route('product.store'), values);
+        router.post(route('consumer.store'), values);
         setOpen(false);
         // alert(JSON.stringify(values));
     };
     const [id, setId] = useState<number | undefined>();
     const handleEditClick = async (id: number) => {
         setId(id);
-        const res = await axios.get(`/product/${id}`);
+        const res = await axios.get(`/consumer/${id}`);
         const data = res.data;
         setOpenEdit(true);
         setValues(data);
@@ -61,14 +64,15 @@ export default function DemoPage() {
     const handleUpdate = () => {
         // setName(e);
         // console.log(id);
-        router.patch(route('product.update', id), values);
+        router.patch(route('consumer.update', id), values);
         setOpenEdit(false);
         // alert(JSON.stringify(values));
     };
+
     const handleDelete = async (id: any) => {
         // console.log(id);
 
-        router.delete(route('product.destroy', id));
+        router.delete(route('consumer.destroy', id));
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -79,8 +83,8 @@ export default function DemoPage() {
                         <DialogComponent
                             open={open}
                             onOpenChange={setOpen}
-                            title="Insert New Product"
-                            description="Insert New Product To Database"
+                            title="Insert New Customer Data"
+                            description="Insert New Customer To Database"
                             trigger={<Button variant="outline">New</Button>}
                             inputValues={values}
                             onInputChange={handleChange}
@@ -90,13 +94,13 @@ export default function DemoPage() {
                             open={openEdit}
                             onOpenChange={setOpenEdit}
                             title="Edit Product"
-                            description={`Edit Product ${values.product_name}`}
+                            description={`Edit Customer Data [${values.consumer_name}]`}
                             inputValues={values}
                             onInputChange={handleChange}
                             footer={<Button onClick={handleUpdate}>Save</Button>}
                         ></DialogComponent>
                     </div>
-                    <DataTable columns={columns(handleEditClick, handleDelete)} data={products} />
+                    <DataTable columns={columns(handleEditClick, handleDelete)} data={consumers} />
                 </div>
             </div>
         </AppLayout>

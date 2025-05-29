@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,17 +14,9 @@ class ProductController extends Controller
     public function index()
     {
         //
-        $products = Product::all();
+        $products = ProductResource::collection(Product::all());
 
         return Inertia::render('product/index', compact('products'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -45,15 +38,7 @@ class ProductController extends Controller
     {
         //
         // $product =
-        return Product::find($id);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        return Product::findBySqid($id);
     }
 
     /**
@@ -62,7 +47,7 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         //
-        $product     = Product::find($id);
+        $product     = Product::findBySqid($id);
         $requestUser = $request->validate(['product_name' => ['required', 'max:255']]);
         $product->update($requestUser);
         return to_route('product.index');
@@ -74,7 +59,7 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         //
-        $product = Product::find($id)->delete();
+        Product::findBySqid($id)->delete();
         return to_route('product.index');
     }
 }

@@ -14,24 +14,37 @@ import { MoreHorizontal } from 'lucide-react';
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 import ModalDelete from '@/components/shared/modal-delete';
-import { router } from '@inertiajs/react';
+
 import { useState } from 'react';
-export type Product = {
+export type Consumer = {
     id: number;
-    product_name: string;
+    consumer_name: string;
+    phone: string;
+    email: string;
+    address: string;
 };
 
-const deleteData = async (id: any) => {
-    // console.log(id);
-
-    router.delete(route('product.destroy', id));
-};
-
-export const columns = (onEditClick: (id: number) => void): ColumnDef<Product>[] => [
+export const columns = (onEditClick: (id: number) => void, onDeleteClick: (id: number) => void): ColumnDef<Consumer>[] => [
     {
-        accessorKey: 'product_name',
+        accessorKey: 'consumer_name',
 
-        header: 'Product Name',
+        header: 'Consumer Name',
+    },
+    {
+        accessorKey: 'phone',
+
+        header: 'Phone',
+    },
+    {
+        accessorKey: 'email',
+
+        cell: ({ row }) => row.original.email || 'Email is not Provided',
+        header: 'Email',
+    },
+    {
+        accessorKey: 'address',
+
+        header: 'Address',
     },
 
     {
@@ -56,7 +69,7 @@ export const columns = (onEditClick: (id: number) => void): ColumnDef<Product>[]
 
                         <ModalDelete
                             onDelete={() => {
-                                deleteData(product.id);
+                                onDeleteClick(product.id);
                                 setDropdownOpen(false);
                             }}
                             trigger={<DropdownMenuItem onSelect={(e) => e.preventDefault()}>Delete</DropdownMenuItem>}
