@@ -19,8 +19,8 @@ const mainNavItems: NavItem[] = [
         icon: Box,
     },
     {
-        title: 'Customer',
-        href: '/customer',
+        title: 'Consumer',
+        href: '/consumer',
         icon: Users,
     },
 ];
