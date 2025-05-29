@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConsumerController;
+use App\Http\Controllers\FarmerController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,6 +25,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/consumer/{id}', [ConsumerController::class, 'show'])->name('consumer.show');
     Route::patch('/consumer/{id}', [ConsumerController::class, 'update'])->name('consumer.update');
     Route::delete('/consumer/{id}', [ConsumerController::class, 'destroy'])->name('consumer.destroy');
+
+    Route::get('/farmer', [FarmerController::class, 'index'])->name('farmer.index');
+    Route::post('/farmer', [FarmerController::class, 'store'])->name('farmer.store');
+    Route::get('/farmer/{id}', [FarmerController::class, 'show'])->name('farmer.show');
+    Route::patch('/farmer/{id}', [FarmerController::class, 'update'])->name('farmer.update');
+    Route::delete('/farmer/{id}', [FarmerController::class, 'destroy'])->name('farmer.destroy');
 });
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
