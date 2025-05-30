@@ -6,6 +6,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Consumer, columns } from '../../components/order/columns';
 // import DialogComponent from './modal';
 import { router, usePage } from '@inertiajs/react';
+
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { DialogComponent } from '../../components/order/modal';
@@ -70,7 +71,16 @@ export default function DemoPage() {
         setOpenEdit(false);
         // alert(JSON.stringify(values));
     };
-
+    const data = [
+        {
+            value: 'consumer-1',
+            label: 'consumer1',
+        },
+        {
+            value: 'consumer-2',
+            label: 'consumer2',
+        },
+    ];
     const handleDelete = async (id: any) => {
         // console.log(id);
 
@@ -92,6 +102,7 @@ export default function DemoPage() {
                             onInputChange={handleChange}
                             comboBoxValue={framework}
                             onComboboxChange={setFramework}
+                            comboKeyPair={data}
                             footer={<Button onClick={handleSubmit}>Save</Button>}
                         ></DialogComponent>
                         <DialogComponent
@@ -103,6 +114,7 @@ export default function DemoPage() {
                             onInputChange={handleChange}
                             comboBoxValue={framework}
                             onComboboxChange={setFramework}
+                            comboKeyPair={data}
                             footer={<Button onClick={handleUpdate}>Save</Button>}
                         ></DialogComponent>
                     </div>

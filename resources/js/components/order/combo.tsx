@@ -7,38 +7,20 @@ import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+type comboBoxType = {
+    value: string;
+    onChange: (value: string) => void;
+    keyValuePair: Array<{ value: string; label: string }>;
+};
 
-const frameworks = [
-    {
-        value: 'next.js',
-        label: 'Next.js',
-    },
-    {
-        value: 'sveltekit',
-        label: 'SvelteKit',
-    },
-    {
-        value: 'nuxt.js',
-        label: 'Nuxt.js',
-    },
-    {
-        value: 'remix',
-        label: 'Remix',
-    },
-    {
-        value: 'astro',
-        label: 'Astro',
-    },
-];
-
-export function ComboboxDemo({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+export function ComboboxDemo({ value, onChange, keyValuePair }: comboBoxType) {
     const [open, setOpen] = useState(false);
 
     return (
         <Popover open={open} onOpenChange={setOpen} modal={false}>
             <PopoverTrigger asChild>
                 <Button variant="outline" role="combobox" className="w-[200px] justify-between">
-                    {value ? frameworks.find((f) => f.value === value)?.label : 'Select framework...'}
+                    {value ? keyValuePair.find((f) => f.value === value)?.label : 'Select framework...'}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -48,17 +30,17 @@ export function ComboboxDemo({ value, onChange }: { value: string; onChange: (va
                     <CommandList>
                         <CommandEmpty>No framework found.</CommandEmpty>
                         <CommandGroup>
-                            {frameworks.map((framework) => (
+                            {keyValuePair.map((k) => (
                                 <CommandItem
-                                    key={framework.value}
-                                    value={framework.value}
+                                    key={k.value}
+                                    value={k.value}
                                     onSelect={() => {
-                                        onChange(framework.value);
+                                        onChange(k.value);
                                         setOpen(false);
                                     }}
                                 >
-                                    <Check className={cn('mr-2 h-4 w-4', value === framework.value ? 'opacity-100' : 'opacity-0')} />
-                                    {framework.label}
+                                    <Check className={cn('mr-2 h-4 w-4', value === k.value ? 'opacity-100' : 'opacity-0')} />
+                                    {k.label}
                                 </CommandItem>
                             ))}
                         </CommandGroup>

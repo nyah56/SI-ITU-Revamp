@@ -19,6 +19,7 @@ type ModalProps = {
     onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     comboBoxValue: string;
     onComboboxChange: (value: string) => void;
+    comboKeyPair: Array<{ value: string; label: string }>;
 };
 
 export function DialogComponent({
@@ -32,8 +33,12 @@ export function DialogComponent({
     onInputChange,
     comboBoxValue,
     onComboboxChange,
+    comboKeyPair,
 }: ModalProps) {
-    const combobox = useMemo(() => <ComboboxDemo value={comboBoxValue} onChange={onComboboxChange} />, [comboBoxValue, onComboboxChange]);
+    const combobox = useMemo(
+        () => <ComboboxDemo value={comboBoxValue} onChange={onComboboxChange} keyValuePair={comboKeyPair} />,
+        [comboBoxValue, onComboboxChange],
+    );
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
