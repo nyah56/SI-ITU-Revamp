@@ -16,6 +16,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 export default function DemoPage() {
+    const searchColumn = { placeholder: 'Farmer', filter: 'farmer_name' };
     const { farmers } = usePage<{ farmers: Consumer[] }>().props;
     const [open, setOpen] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
@@ -100,7 +101,7 @@ export default function DemoPage() {
                             footer={<Button onClick={handleUpdate}>Save</Button>}
                         ></DialogComponent>
                     </div>
-                    <DataTable columns={columns(handleEditClick, handleDelete)} data={farmers} />
+                    <DataTable columns={columns(handleEditClick, handleDelete)} data={farmers} search={searchColumn} />
                 </div>
             </div>
         </AppLayout>

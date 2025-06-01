@@ -18,6 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function DemoPage() {
+    const searchColumn = { placeholder: 'Consumer', filter: 'consumer_name' };
     const { orders } = usePage<{ orders: Order[] }>().props;
     const { consumers } = usePage<any>().props;
     const [open, setOpen] = useState(false);
@@ -26,7 +27,6 @@ export default function DemoPage() {
         consumer: '',
         status: '',
     });
-    const [consumer, setConsumer] = useState('');
 
     const [values, setValues] = useState({
         consumer_name: '',
@@ -154,7 +154,7 @@ export default function DemoPage() {
                         ></DialogComponent>
                     </div>
 
-                    <DataTable columns={columns(handleEditClick, handleDelete)} data={orders} />
+                    <DataTable columns={columns(handleEditClick, handleDelete)} data={orders} search={searchColumn} />
                 </div>
             </div>
         </AppLayout>
