@@ -1,6 +1,5 @@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { useMemo } from 'react';
 import { ComboboxDemo } from './combo';
 type ModalProps = {
     title: string;
@@ -10,10 +9,7 @@ type ModalProps = {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
     inputValues?: {
-        farmer_name: string;
-        phone: string;
-        email: string;
-        address: string;
+        consumer_name: string;
     };
 
     onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -21,7 +17,6 @@ type ModalProps = {
     onComboboxChange: (value: string) => void;
     comboKeyPair: Array<{ value: string; label: string }>;
 };
-
 export function DialogComponent({
     title,
     description,
@@ -35,10 +30,6 @@ export function DialogComponent({
     onComboboxChange,
     comboKeyPair,
 }: ModalProps) {
-    const combobox = useMemo(
-        () => <ComboboxDemo value={comboBoxValue} onChange={onComboboxChange} keyValuePair={comboKeyPair} />,
-        [comboBoxValue, onComboboxChange],
-    );
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
@@ -53,7 +44,7 @@ export function DialogComponent({
                             Consumer Name
                         </Label>
 
-                        {combobox}
+                        <ComboboxDemo value={comboBoxValue} onChange={onComboboxChange} keyValuePair={comboKeyPair} />
                     </div>
                 </div>
                 {footer && <DialogFooter>{footer}</DialogFooter>}

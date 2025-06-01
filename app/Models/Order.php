@@ -16,6 +16,6 @@ class Order extends Model
 
     public function consumer()
     {
-        return $this->belongsTo('consumer', 'consumer_id');
+        return $this->belongsTo(Consumer::class, 'consumer_id');
     }
 }

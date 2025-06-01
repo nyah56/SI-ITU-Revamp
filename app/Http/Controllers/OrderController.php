@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ConsumerResource;
 use App\Http\Resources\OrderResource;
+use App\Models\Consumer;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,13 +15,17 @@ class OrderController extends Controller
     {
         $orders = OrderResource::collection(Order::with('consumer')->get());
 
-        return Inertia::render('order/index', compact('orders'));
+        $consumers = ConsumerResource::collection(Consumer::all());
+        return Inertia::render('order/index', compact('orders', 'consumers'));
     }
 
     public function store(Request $request)
     {
-        Order::create($request->all());
-        return to_route('farmer.index');
+
+        $id = Consumer::findBySqid($request->consumer_name)->pluck('id')->first();
+        // dd($id);
+        Order::create(['consumer_id' => $id]);
+        return to_route('order.index');
     }
     public function show($id)
     {

@@ -15,7 +15,7 @@ class OrderResource extends JsonResource
     {
         return [
             'id'            => $this->sqid,
-            'consumer_name' => $this->consumer->consumer->consumer_name,
+            'consumer_name' => $this->consumer->consumer_name,
         ];
     }
 }
