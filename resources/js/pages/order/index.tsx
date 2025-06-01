@@ -22,23 +22,29 @@ export default function DemoPage() {
     const { consumers } = usePage<any>().props;
     const [open, setOpen] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
-    const [framework, setFramework] = useState('');
+    const [combo, setCombo] = useState({
+        consumer: '',
+        status: '',
+    });
+    const [consumer, setConsumer] = useState('');
+
     const [values, setValues] = useState({
         consumer_name: '',
+        status: '',
     });
 
     useEffect(() => {
         if (!open) {
-            setValues({ consumer_name: '' });
-            setFramework('');
+            setValues({ consumer_name: '', status: '' });
+            setCombo({ consumer: '', status: '' });
         }
     }, [open]);
 
     // Reset values when the edit modal closes
     useEffect(() => {
         if (!openEdit) {
-            setValues({ consumer_name: '' });
-            setFramework('');
+            setValues({ consumer_name: '', status: '' });
+            setCombo({ consumer: '', status: '' });
         }
     }, [openEdit]);
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -49,15 +55,24 @@ export default function DemoPage() {
             [key]: value,
         }));
     }
-    const data = consumers.map((i: Order) => ({
-        value: i.id,
-        label: i.consumer_name,
-    }));
-    const handleCombo = (e: SetStateAction<any>) => {
-        setFramework(e);
+
+    const handleConsumer = (e: SetStateAction<any>) => {
+        setCombo({ ...combo, consumer: e });
+        // setValues((values) => ({
+        //     ...values,
+        //     consumer_name: e,
+        // }));
         setValues((values) => ({
             ...values,
             consumer_name: e,
+        }));
+    };
+    const handleStatus = (e: SetStateAction<any>) => {
+        setCombo({ ...combo, status: e });
+
+        setValues((values) => ({
+            ...values,
+            status: e,
         }));
     };
     const handleSubmit = () => {
@@ -68,18 +83,35 @@ export default function DemoPage() {
         // alert(JSON.stringify(values));
     };
     const [id, setId] = useState<number | undefined>();
+
+    const statusData = [
+        { value: 'pending', label: 'Pending' },
+        { value: 'processing', label: 'Processing' },
+        { value: 'completed', label: 'Completed' },
+        { value: 'cancelled', label: 'Cancelled' },
+    ];
+    const data = consumers.map((i: Order) => ({
+        value: i.id,
+        label: i.consumer_name,
+    }));
+
     const handleEditClick = async (id: number) => {
         setId(id);
-        const res = await axios.get(`/farmer/${id}`);
-        const data = res.data;
+        // console.log(id);
+        const response = await axios.get(`/order/${id}`);
+        const result = response.data;
+        const getCombo = data.find((item: { value: string }) => item.value === result.consumer_id);
+        // console.log(getCombo.value);
+        // setCombo(getCombo.value);
+        setCombo({ consumer: getCombo.value, status: result.status });
+
         setOpenEdit(true);
-        setValues(data);
-        // console.log(res.data); // open the modal
+        setValues({ consumer_name: result.consumer_id, status: result.status });
     };
     const handleUpdate = () => {
         // setName(e);
         // console.log(id);
-        router.patch(route('farmer.update', id), values);
+        router.patch(route('order.update', id), values);
         setOpenEdit(false);
         // alert(JSON.stringify(values));
     };
@@ -87,7 +119,7 @@ export default function DemoPage() {
     const handleDelete = async (id: any) => {
         // console.log(id);
 
-        router.delete(route('farmer.destroy', id));
+        router.delete(route('order.destroy', id));
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -103,23 +135,23 @@ export default function DemoPage() {
                             trigger={<Button variant="outline">New</Button>}
                             inputValues={values}
                             onInputChange={handleChange}
-                            comboBoxValue={framework}
-                            onComboboxChange={handleCombo}
-                            comboKeyPair={data}
+                            comboBoxValue={{ consumer: combo.consumer, status: combo.status }}
+                            onComboboxChange={{ consumer: handleConsumer, status: handleStatus }}
+                            comboKeyPair={{ consumer: data, status: statusData }}
                             footer={<Button onClick={handleSubmit}>Save</Button>}
                         ></DialogComponent>
-                        {/* <DialogComponent
+                        <DialogComponent
                             open={openEdit}
                             onOpenChange={setOpenEdit}
                             title="Edit Product"
-                            description={`Edit Customer Data [${values.consumer_name}]`}
+                            description={`Edit Customer Data`}
                             inputValues={values}
                             onInputChange={handleChange}
-                            comboBoxValue={framework}
-                            onComboboxChange={setFramework}
-                            comboKeyPair={data}
+                            comboBoxValue={{ consumer: combo.consumer, status: combo.status }}
+                            onComboboxChange={{ consumer: handleConsumer, status: handleStatus }}
+                            comboKeyPair={{ consumer: data, status: statusData }}
                             footer={<Button onClick={handleUpdate}>Save</Button>}
-                        ></DialogComponent> */}
+                        ></DialogComponent>
                     </div>
 
                     <DataTable columns={columns(handleEditClick, handleDelete)} data={orders} />

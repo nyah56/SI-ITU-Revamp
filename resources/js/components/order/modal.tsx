@@ -13,9 +13,18 @@ type ModalProps = {
     };
 
     onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    comboBoxValue: string;
-    onComboboxChange: (value: string) => void;
-    comboKeyPair: Array<{ value: string; label: string }>;
+    comboBoxValue: {
+        consumer: string;
+        status: string;
+    };
+    onComboboxChange: {
+        consumer: (value: string) => void;
+        status: (value: string) => void;
+    };
+    comboKeyPair: {
+        consumer: Array<{ value: string; label: string }>;
+        status: Array<{ value: string; label: string }>;
+    };
 };
 export function DialogComponent({
     title,
@@ -44,7 +53,24 @@ export function DialogComponent({
                             Consumer Name
                         </Label>
 
-                        <ComboboxDemo value={comboBoxValue} onChange={onComboboxChange} keyValuePair={comboKeyPair} />
+                        <ComboboxDemo
+                            placeholder="Consumer"
+                            value={comboBoxValue.consumer}
+                            onChange={onComboboxChange.consumer}
+                            keyValuePair={comboKeyPair.consumer}
+                        />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="name" className="text-right">
+                            Order Status
+                        </Label>
+
+                        <ComboboxDemo
+                            placeholder="Order Status"
+                            value={comboBoxValue.status}
+                            onChange={onComboboxChange.status}
+                            keyValuePair={comboKeyPair.status}
+                        />
                     </div>
                 </div>
                 {footer && <DialogFooter>{footer}</DialogFooter>}

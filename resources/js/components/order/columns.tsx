@@ -11,28 +11,60 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
+
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 import ModalDelete from '@/components/shared/modal-delete';
 
+import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 export type Order = {
     id: number;
     consumer_name: string;
+    status: string;
 };
-
 export const columns = (onEditClick: (id: number) => void, onDeleteClick: (id: number) => void): ColumnDef<Order>[] => [
+    {
+        accessorKey: 'id',
+
+        header: 'Order ID',
+    },
     {
         accessorKey: 'consumer_name',
 
         header: 'Consumer Name',
+    },
+    {
+        accessorKey: 'status',
+
+        header: 'Status',
+
+        cell: ({ row }) => {
+            const status = row.original.status;
+            const capitalizedStatus = status.charAt(0).toUpperCase() + status.slice(1);
+            return (
+                <Badge
+                    className={
+                        status === 'completed'
+                            ? 'bg-green-100 text-green-800'
+                            : status === 'pending'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : status === 'cancelled'
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-gray-100 text-gray-800'
+                    }
+                >
+                    {capitalizedStatus}
+                </Badge>
+            );
+        },
     },
 
     {
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => {
-            const product = row.original;
+            const order = row.original;
             const [dropdownOpen, setDropdownOpen] = useState(false);
 
             return (
@@ -46,11 +78,11 @@ export const columns = (onEditClick: (id: number) => void, onDeleteClick: (id: n
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => onEditClick(product.id)}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onEditClick(order.id)}>Edit</DropdownMenuItem>
 
                         <ModalDelete
                             onDelete={() => {
-                                onDeleteClick(product.id);
+                                onDeleteClick(order.id);
                                 setDropdownOpen(false);
                             }}
                             trigger={<DropdownMenuItem onSelect={(e) => e.preventDefault()}>Delete</DropdownMenuItem>}

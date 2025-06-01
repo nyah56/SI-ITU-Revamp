@@ -11,24 +11,25 @@ type comboBoxType = {
     value: string;
     onChange: (value: string) => void;
     keyValuePair: Array<{ value: string; label: string }>;
+    placeholder: string;
 };
 
-export function ComboboxDemo({ value, onChange, keyValuePair }: comboBoxType) {
+export function ComboboxDemo({ value, onChange, keyValuePair, placeholder }: comboBoxType) {
     const [open, setOpen] = useState(false);
 
     return (
         <Popover open={open} onOpenChange={setOpen} modal={false}>
             <PopoverTrigger asChild>
                 <Button variant="outline" role="combobox" className="w-[200px] justify-between">
-                    {value ? keyValuePair.find((f) => f.value === value)?.label : 'Select framework...'}
+                    {value ? keyValuePair.find((f) => f.value === value)?.label : `Select ${placeholder}...`}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0" style={{ pointerEvents: 'auto' }}>
                 <Command>
-                    <CommandInput placeholder="Search framework..." />
+                    <CommandInput placeholder={`Search ${placeholder}`} />
                     <CommandList>
-                        <CommandEmpty>No framework found.</CommandEmpty>
+                        <CommandEmpty>No {placeholder} found.</CommandEmpty>
                         <CommandGroup>
                             {keyValuePair.map((k) => (
                                 <CommandItem

@@ -22,19 +22,23 @@ class OrderController extends Controller
     public function store(Request $request)
     {
 
-        $id = Consumer::findBySqid($request->consumer_name)->pluck('id')->first();
-        // dd($id);
-        Order::create(['consumer_id' => $id]);
+        $id = Consumer::whereSqid($request->consumer_name)->value('id');
+        // dd($request->all());
+        Order::create(['consumer_id' => $id, 'status' => $request->status]);
         return to_route('order.index');
     }
     public function show($id)
     {
-        return Order::findBySqid($id);
+        return OrderResource::make(Order::findBySqid($id));
     }
     public function update(Request $request, $id)
     {
-        Order::findBySqid($id)->update($request->all());
-        return to_route('farmer.index');
+        // dd($request->all());
+        $order = Order::findBySqid($id);
+        $id    = Consumer::whereSqid($request->consumer_name)->value('id');
+        // dd($id);
+        $order->update(['consumer_id' => $id, 'status' => $request->status]);
+        return to_route('order.index');
     }
     public function destroy($id)
     {
