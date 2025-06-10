@@ -1,7 +1,7 @@
 'use client';
 
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
@@ -16,7 +16,10 @@ type comboBoxType = {
 
 export function ComboboxDemo({ value, onChange, keyValuePair, placeholder }: comboBoxType) {
     const [open, setOpen] = useState(false);
-
+    const [input, setInput] = useState('');
+    const filtered = useMemo(() => {
+        return keyValuePair.filter((item) => item.label.toLowerCase().includes(input.toLowerCase()));
+    }, [input, keyValuePair]);
     return (
         <Popover open={open} onOpenChange={setOpen} modal={false}>
             <PopoverTrigger asChild>
@@ -27,17 +30,18 @@ export function ComboboxDemo({ value, onChange, keyValuePair, placeholder }: com
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0" style={{ pointerEvents: 'auto' }}>
                 <Command>
-                    <CommandInput placeholder={`Search ${placeholder}`} />
+                    <CommandInput placeholder={`Search ${placeholder}`} onValueChange={setInput} />
                     <CommandList>
                         <CommandEmpty>No {placeholder} found.</CommandEmpty>
                         <CommandGroup>
-                            {keyValuePair.map((k) => (
+                            {filtered.map((k) => (
                                 <CommandItem
-                                    key={k.label}
+                                    key={k.value}
                                     value={k.label}
                                     onSelect={() => {
-                                        onChange(k.label);
+                                        onChange(k.value);
                                         setOpen(false);
+                                        setInput('');
                                     }}
                                 >
                                     <Check className={cn('mr-2 h-4 w-4', value === k.value ? 'opacity-100' : 'opacity-0')} />
