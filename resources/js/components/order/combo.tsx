@@ -33,10 +33,10 @@ export function ComboboxDemo({ value, onChange, keyValuePair, placeholder }: com
                         <CommandGroup>
                             {keyValuePair.map((k) => (
                                 <CommandItem
-                                    key={k.value}
-                                    value={k.value}
+                                    key={k.label}
+                                    value={k.label}
                                     onSelect={() => {
-                                        onChange(k.value);
+                                        onChange(k.label);
                                         setOpen(false);
                                     }}
                                 >
