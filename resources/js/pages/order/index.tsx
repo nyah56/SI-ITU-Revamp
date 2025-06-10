@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 
-import { DataTable } from '@/components/shared/data-table';
+import { DataTable, Meta } from '@/components/shared/data-table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Order, columns } from '../../components/order/columns';
@@ -19,7 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function DemoPage() {
     const searchColumn = { placeholder: 'Consumer', filter: 'consumer_name' };
-    const { orders } = usePage<{ orders: Order[] }>().props;
+    const { orders } = usePage<{ orders: { data: Order[]; meta: Meta } }>().props;
     const { consumers } = usePage<any>().props;
     const [open, setOpen] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
@@ -154,7 +154,7 @@ export default function DemoPage() {
                         ></DialogComponent>
                     </div>
 
-                    <DataTable columns={columns(handleEditClick, handleDelete)} data={orders} search={searchColumn} />
+                    <DataTable meta={orders.meta} columns={columns(handleEditClick, handleDelete)} data={orders.data} search={searchColumn} />
                 </div>
             </div>
         </AppLayout>

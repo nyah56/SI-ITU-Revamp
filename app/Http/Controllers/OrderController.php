@@ -11,11 +11,22 @@ use Inertia\Inertia;
 class OrderController extends Controller
 {
     //
-    public function index()
+    public function index(Request $request)
     {
-        $orders = OrderResource::collection(Order::with('consumer')->get());
+        $query = Order::query();
+        if ($search = ucfirst($request->input('search'))) {
+            $q = Consumer::where('consumer_name', 'like', "%$search%")->pluck('id');
 
-        $consumers = ConsumerResource::collection(Consumer::all());
+            if ($q->empty()) {
+                $query->whereIn('consumer_id', $q);
+            } else {
+                $query->whereRaw('0=1');
+            }
+        }
+        $per_page = $request->input('per_page', 10);
+        $orders   = OrderResource::collection($query->with('consumer')->orderBy('id', 'asc')->paginate($per_page)->withQueryString());
+
+        $consumers = ConsumerResource::collection(Consumer::select('id', 'consumer_name')->get());
         return Inertia::render('order/index', compact('orders', 'consumers'));
     }
 

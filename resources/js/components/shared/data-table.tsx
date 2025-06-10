@@ -1,20 +1,32 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { router } from '@inertiajs/react';
 import {
     ColumnDef,
     ColumnFiltersState,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { useState } from 'react';
-import { DataTablePagination } from './data-table-pagination';
+import { useMemo, useState } from 'react';
+import { DataTablePagination, links } from './data-table-pagination';
+
+export type Meta = {
+    current_page: number;
+    from: number;
+    last_page: number;
+    links: links[];
+    path: string;
+    per_page: number;
+    to: number;
+    total: number;
+};
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
@@ -22,15 +34,65 @@ interface DataTableProps<TData, TValue> {
         filter: string;
         placeholder: string;
     };
+
+    meta: Meta;
 }
-export function DataTable<TData, TValue>({ columns, data, search }: DataTableProps<TData, TValue>) {
+function debounce<Args extends unknown[]>(func: (...args: Args) => void, delay: number): (...args: Args) => void {
+    let timer: ReturnType<typeof setTimeout>;
+
+    return (...args: Args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => func(...args), delay);
+    };
+}
+type searchFIlter = {
+    search?: string;
+    per_page?: string;
+};
+export function DataTable<TData, TValue>({ columns, data, search, meta }: DataTableProps<TData, TValue>) {
+    const [query, setQuery] = useState('');
+    const [page, setPage] = useState('10');
+    const debouncedSearch = useMemo(
+        () =>
+            debounce((value: searchFIlter) => {
+                router.get(
+                    route(route().current() ?? ''),
+                    { search: value.search, per_page: value.per_page },
+                    {
+                        preserveState: true,
+                        replace: true,
+                    },
+                );
+            }, 300),
+        [],
+    );
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = { per_page: page, ...(e.target.value && e.target.value !== '' && { search: e.target.value }) };
+        setQuery(value.search ?? '');
+        debouncedSearch(value);
+    };
+    const handleChange = (e: string) => {
+        // console.log(e);
+        const value = { per_page: e, ...(query && query !== '' && { search: query }) };
+        setPage(value.per_page);
+        router.get(
+            route(route().current() ?? ''),
+            { per_page: value.per_page, search: value.search },
+            {
+                preserveState: true,
+                replace: true,
+            },
+        );
+    };
+
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [sorting, setSorting] = useState<SortingState>([{ id: search.filter, desc: false }]);
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        // getPaginationRowModel: getPaginationRowModel(),
         onColumnFiltersChange: setColumnFilters,
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
@@ -45,12 +107,7 @@ export function DataTable<TData, TValue>({ columns, data, search }: DataTablePro
     return (
         <>
             <div className="flex items-center py-4">
-                <Input
-                    placeholder={`Search ${search.placeholder}`}
-                    value={(table.getColumn(search.filter)?.getFilterValue() as string) ?? ''}
-                    onChange={(event) => table.getColumn(search.filter)?.setFilterValue(event.target.value)}
-                    className="max-w-sm"
-                />
+                <Input placeholder={`Search ${search.placeholder}`} value={query} onChange={handleSearch} className="max-w-sm" />
             </div>
             <div className="rounded-md border">
                 <Table>
@@ -87,7 +144,7 @@ export function DataTable<TData, TValue>({ columns, data, search }: DataTablePro
                 </Table>
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
-                <DataTablePagination table={table} />
+                <DataTablePagination meta={meta} select={handleChange} />
             </div>
         </>
     );

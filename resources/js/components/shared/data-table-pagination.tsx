@@ -1,27 +1,47 @@
-import { Table } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-interface DataTablePaginationProps<TData> {
-    table: Table<TData>;
-}
-
-export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+import { Link } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+export type links = {
+    url?: string;
+    label?: string;
+    active?: boolean;
+};
+type Meta = {
+    meta: {
+        current_page: number;
+        from: number;
+        last_page: number;
+        links: links[];
+        path: string;
+        per_page: number;
+        to: number;
+        total: number;
+    };
+    select: (value: string) => void;
+};
+const ConditionalRendering = (condition: boolean, template: React.ReactNode, icon: React.ReactNode) => {
+    console.log();
+    if (!condition) {
+        return template;
+    }
+    return (
+        <Button variant="outline" size="icon" className="hidden size-8 lg:flex" disabled={true}>
+            <span className="sr-only">Go to previous page</span>
+            {icon}
+        </Button>
+    );
+};
+export function DataTablePagination({ meta, select }: Meta) {
+    // console.log(meta);
     return (
         <div className="flex items-center justify-between px-2">
             <div className="flex items-center space-x-6 lg:space-x-8">
                 <div className="flex items-center space-x-2">
                     <p className="text-sm font-medium">Rows per page</p>
-                    <Select
-                        value={`${table.getState().pagination.pageSize}`}
-                        onValueChange={(value) => {
-                            table.setPageSize(Number(value));
-                        }}
-                    >
+                    <Select value={`${meta.per_page}`} onValueChange={select}>
                         <SelectTrigger className="h-8 w-[70px]">
-                            <SelectValue placeholder={table.getState().pagination.pageSize} />
+                            <SelectValue placeholder={meta.per_page} />
                         </SelectTrigger>
                         <SelectContent side="top">
                             {[10, 20, 25, 30, 40, 50].map((pageSize) => (
@@ -33,43 +53,65 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
                     </Select>
                 </div>
                 <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                    Page {meta.current_page} of {meta.last_page}
                 </div>
+
                 <div className="flex items-center space-x-2">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        className="hidden size-8 lg:flex"
-                        onClick={() => table.setPageIndex(0)}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        <span className="sr-only">Go to first page</span>
-                        <ChevronsLeft />
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        className="size-8"
-                        onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        <span className="sr-only">Go to previous page</span>
-                        <ChevronLeft />
-                    </Button>
-                    <Button variant="outline" size="icon" className="size-8" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                        <span className="sr-only">Go to next page</span>
-                        <ChevronRight />
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        className="hidden size-8 lg:flex"
-                        onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        <span className="sr-only">Go to last page</span>
-                        <ChevronsRight />
-                    </Button>
+                    {ConditionalRendering(
+                        !meta.links[0].url,
+                        <Link href={meta.links[1].url ?? ''} className="hidden size-8 lg:flex">
+                            <Button variant="outline" size="icon" className="hidden size-8 lg:flex">
+                                <span className="sr-only">Go to first page</span>
+                                <ChevronsLeft />
+                            </Button>
+                        </Link>,
+                        <ChevronsLeft />,
+                    )}
+                    {/* //first page */}
+                    {ConditionalRendering(
+                        !meta.links[meta.current_page - 1].url,
+                        <Link href={meta.links[meta.current_page - 1].url ?? ''} className="hidden size-8 lg:flex">
+                            <Button variant="outline" size="icon" className="hidden size-8 lg:flex">
+                                <span className="sr-only">Go to previous page</span>
+                                <ChevronLeft />
+                            </Button>
+                        </Link>,
+                        <ChevronLeft />,
+                    )}
+                    {/* prev */}
+                    {meta.links.map((item, index) => {
+                        if (index == 0 || index == meta.links.length - 1) return null;
+                        return (
+                            <Link key={index} href={item.url ?? ''} className="hidden size-8 lg:flex">
+                                <Button variant="outline" size="icon" className="hidden size-8 lg:flex">
+                                    {item.label}
+                                </Button>
+                            </Link>
+                        );
+                    })}
+                    {/* //number */}
+                    {ConditionalRendering(
+                        !meta.links[meta.current_page + 1].url,
+                        <Link href={meta.links[meta.current_page + 1].url ?? ''} className="hidden size-8 lg:flex">
+                            <Button variant="outline" size="icon" className="hidden size-8 lg:flex">
+                                <span className="sr-only">Go to Next page</span>
+                                <ChevronRight />
+                            </Button>
+                        </Link>,
+                        <ChevronRight />,
+                    )}
+                    {/* nextpage */}
+                    {ConditionalRendering(
+                        !meta.links[meta.links.length - 1].url,
+                        <Link href={meta.links[meta.links.length - 1].url ?? ''} className="hidden size-8 lg:flex">
+                            <Button variant="outline" size="icon" className="hidden size-8 lg:flex">
+                                <span className="sr-only">Go to Last page</span>
+                                <ChevronsRight />
+                            </Button>
+                        </Link>,
+                        <ChevronsRight />,
+                    )}
+                    {/*  //last_page */}
                 </div>
             </div>
         </div>

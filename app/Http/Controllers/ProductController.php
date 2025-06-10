@@ -11,11 +11,15 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        $products = ProductResource::collection(Product::all());
-
+        $query = Product::query();
+        if ($search = ucfirst($request->input('search'))) {
+            $query->where('product_name', 'like', "%{$search}%");
+        }
+        $per_page = $request->input('per_page', 10);
+        $products = ProductResource::collection($query->orderBy('product_name', 'asc')->paginate($per_page)->withQueryString());
         return Inertia::render('product/index', compact('products'));
     }
 

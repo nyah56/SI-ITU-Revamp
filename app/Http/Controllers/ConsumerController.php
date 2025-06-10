@@ -9,9 +9,14 @@ use Inertia\Inertia;
 class ConsumerController extends Controller
 {
     //
-    public function index()
+    public function index(Request $request)
     {
-        $consumers = ConsumerResource::collection(Consumer::all());
+        $query = Consumer::query();
+        if ($search = ucfirst($request->input('search'))) {
+            $query->where('consumer_name', 'like', "%{$search}%");
+        }
+        $per_page  = $request->input('per_page', 10);
+        $consumers = ConsumerResource::collection($query->orderBy('consumer_name', 'asc')->paginate($per_page)->withQueryString());
 
         return Inertia::render('consumer/index', compact('consumers'));
     }

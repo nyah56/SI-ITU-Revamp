@@ -16,7 +16,7 @@ import { MoreHorizontal } from 'lucide-react';
 import ModalDelete from '@/components/shared/modal-delete';
 
 import { useState } from 'react';
-export type Consumer = {
+export type Farmer = {
     id: number;
     farmer_name: string;
     phone: string;
@@ -24,7 +24,7 @@ export type Consumer = {
     address: string;
 };
 
-export const columns = (onEditClick: (id: number) => void, onDeleteClick: (id: number) => void): ColumnDef<Consumer>[] => [
+export const columns = (onEditClick: (id: number) => void, onDeleteClick: (id: number) => void): ColumnDef<Farmer>[] => [
     {
         accessorKey: 'farmer_name',
 

@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
 
-import { DataTable } from '@/components/shared/data-table';
+import { DataTable, Meta } from '@/components/shared/data-table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Consumer, columns } from '../../components/farmer/columns';
+import { Farmer, columns } from '../../components/farmer/columns';
 // import DialogComponent from './modal';
 import { router, usePage } from '@inertiajs/react';
 import axios from 'axios';
@@ -17,7 +17,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 export default function DemoPage() {
     const searchColumn = { placeholder: 'Farmer', filter: 'farmer_name' };
-    const { farmers } = usePage<{ farmers: Consumer[] }>().props;
+    const { farmers } = usePage<{ farmers: { data: Farmer[]; meta: Meta } }>().props;
     const [open, setOpen] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [values, setValues] = useState({
@@ -101,7 +101,8 @@ export default function DemoPage() {
                             footer={<Button onClick={handleUpdate}>Save</Button>}
                         ></DialogComponent>
                     </div>
-                    <DataTable columns={columns(handleEditClick, handleDelete)} data={farmers} search={searchColumn} />
+
+                    <DataTable meta={farmers.meta} columns={columns(handleEditClick, handleDelete)} data={farmers.data} search={searchColumn} />
                 </div>
             </div>
         </AppLayout>

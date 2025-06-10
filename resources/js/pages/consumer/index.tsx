@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 
-import { DataTable } from '@/components/shared/data-table';
+import { DataTable, Meta } from '@/components/shared/data-table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Consumer, columns } from '../../components/consumer/columns';
@@ -17,7 +17,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 export default function DemoPage() {
     const searchColumn = { placeholder: 'Consumer', filter: 'consumer_name' };
-    const { consumers } = usePage<{ consumers: Consumer[] }>().props;
+    const { consumers } = usePage<{ consumers: { data: Consumer[]; meta: Meta } }>().props;
     const [open, setOpen] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [values, setValues] = useState({
@@ -101,7 +101,7 @@ export default function DemoPage() {
                             footer={<Button onClick={handleUpdate}>Save</Button>}
                         ></DialogComponent>
                     </div>
-                    <DataTable columns={columns(handleEditClick, handleDelete)} data={consumers} search={searchColumn} />
+                    <DataTable meta={consumers.meta} columns={columns(handleEditClick, handleDelete)} data={consumers.data} search={searchColumn} />
                 </div>
             </div>
         </AppLayout>

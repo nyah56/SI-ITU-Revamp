@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Product, columns } from '../../components/product/columns';
-import { DataTable } from '../../components/shared/data-table';
+import { DataTable, Meta } from '../../components/shared/data-table';
 // import DialogComponent from './modal';
 import { router, usePage } from '@inertiajs/react';
 import axios from 'axios';
@@ -15,20 +15,27 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/product',
     },
 ];
+
 export default function DemoPage() {
     const searchColumn = { placeholder: 'Product', filter: 'product_name' };
-    const { products } = usePage<{ products: Product[] }>().props;
+    const { products } = usePage<{
+        products: {
+            data: Product[];
+            meta: Meta;
+        };
+    }>().props;
     const [open, setOpen] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [values, setValues] = useState({
         product_name: '',
     });
+    // console.log(products);
     useEffect(() => {
         if (!open) {
             setValues({ product_name: '' });
         }
     }, [open]);
-
+    // conso
     // Reset values when the edit modal closes
     useEffect(() => {
         if (!openEdit) {
@@ -52,6 +59,7 @@ export default function DemoPage() {
     };
     const [id, setId] = useState<number | undefined>();
     const handleEditClick = async (id: number) => {
+        console.log(id);
         setId(id);
         const res = await axios.get(`/product/${id}`);
         const data = res.data;
@@ -97,7 +105,7 @@ export default function DemoPage() {
                             footer={<Button onClick={handleUpdate}>Save</Button>}
                         ></DialogComponent>
                     </div>
-                    <DataTable columns={columns(handleEditClick, handleDelete)} data={products} search={searchColumn} />
+                    <DataTable meta={products.meta} columns={columns(handleEditClick, handleDelete)} data={products.data} search={searchColumn} />
                 </div>
             </div>
         </AppLayout>
