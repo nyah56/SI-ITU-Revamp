@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { ComboboxDemo } from './combo';
@@ -8,11 +9,7 @@ type ModalProps = {
     footer?: React.ReactNode;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
-    inputValues?: {
-        consumer_name: string;
-    };
 
-    onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     comboBoxValue: {
         consumer: string;
         status: string;
@@ -25,23 +22,14 @@ type ModalProps = {
         consumer: Array<{ value: string; label: string }>;
         status: Array<{ value: string; label: string }>;
     };
+    handleSubmit: () => void;
 };
-export function DialogComponent({
-    title,
-    description,
-    trigger,
-    footer,
-    open,
-    onOpenChange,
-    inputValues,
-    onInputChange,
-    comboBoxValue,
-    onComboboxChange,
-    comboKeyPair,
-}: ModalProps) {
+export function DialogComponent({ title, description, open, onOpenChange, comboBoxValue, onComboboxChange, comboKeyPair, handleSubmit }: ModalProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+            <DialogTrigger asChild>
+                <Button variant="outline">New</Button>
+            </DialogTrigger>
             <DialogContent className="sm:max-w-[768px]" onOpenAutoFocus={(e) => e.preventDefault()}>
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
@@ -73,7 +61,10 @@ export function DialogComponent({
                         />
                     </div>
                 </div>
-                {footer && <DialogFooter>{footer}</DialogFooter>}
+                <DialogFooter>
+                    <Button onClick={handleSubmit}>Save</Button>
+                </DialogFooter>
+                {/* {footer && <DialogFooter>{footer}</DialogFooter>} */}
             </DialogContent>
         </Dialog>
     );

@@ -1,5 +1,3 @@
-import { Button } from '@/components/ui/button';
-
 import { DataTable, Meta } from '@/components/shared/data-table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -121,37 +119,38 @@ export default function DemoPage() {
 
         router.delete(route('order.destroy', id));
     };
+    const createDialog = {
+        open: open,
+        onOpenChange: setOpen,
+        title: 'Insert New Customer Data',
+        description: 'Insert New Customer To Database',
+        inputValues: values,
+        onInputChange: handleChange,
+        comboBoxValue: { consumer: combo.consumer, status: combo.status },
+        onComboboxChange: { consumer: handleConsumer, status: handleStatus },
+        comboKeyPair: { consumer: data, status: statusData },
+        handleSubmit: handleSubmit,
+    };
+    const editDialog = {
+        open: openEdit,
+        onOpenChange: setOpenEdit,
+        title: 'Edit Order Data',
+        description: 'Edit Order Data',
+        onInputChange: handleChange,
+        comboBoxValue: { consumer: combo.consumer, status: combo.status },
+        onComboboxChange: { consumer: handleConsumer, status: handleStatus },
+        comboKeyPair: { consumer: data, status: statusData },
+        handleSubmit: handleUpdate,
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <div className="container mx-auto py-10">
                 <div className="flex flex-col gap-4">
                     <div className="flex justify-between">
                         <h2>{breadcrumbs[0].title} List</h2>
-                        <DialogComponent
-                            open={open}
-                            onOpenChange={setOpen}
-                            title="Insert New Customer Data"
-                            description="Insert New Customer To Database"
-                            trigger={<Button variant="outline">New</Button>}
-                            inputValues={values}
-                            onInputChange={handleChange}
-                            comboBoxValue={{ consumer: combo.consumer, status: combo.status }}
-                            onComboboxChange={{ consumer: handleConsumer, status: handleStatus }}
-                            comboKeyPair={{ consumer: data, status: statusData }}
-                            footer={<Button onClick={handleSubmit}>Save</Button>}
-                        ></DialogComponent>
-                        <DialogComponent
-                            open={openEdit}
-                            onOpenChange={setOpenEdit}
-                            title="Edit Product"
-                            description={`Edit Customer Data`}
-                            inputValues={values}
-                            onInputChange={handleChange}
-                            comboBoxValue={{ consumer: combo.consumer, status: combo.status }}
-                            onComboboxChange={{ consumer: handleConsumer, status: handleStatus }}
-                            comboKeyPair={{ consumer: data, status: statusData }}
-                            footer={<Button onClick={handleUpdate}>Save</Button>}
-                        ></DialogComponent>
+                        <DialogComponent {...createDialog}></DialogComponent>
+                        <DialogComponent {...editDialog}></DialogComponent>
                     </div>
 
                     <DataTable meta={orders.meta} columns={columns(handleEditClick, handleDelete)} data={orders.data} search={searchColumn} />
