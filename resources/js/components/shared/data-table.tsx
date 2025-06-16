@@ -45,16 +45,15 @@ function debounce<Args extends unknown[]>(func: (...args: Args) => void, delay: 
         timer = setTimeout(() => func(...args), delay);
     };
 }
-type searchFIlter = {
+type searchFilter = {
     search?: string;
     per_page?: string;
 };
 export function DataTable<TData, TValue>({ columns, data, search, meta }: DataTableProps<TData, TValue>) {
-    const [query, setQuery] = useState('');
-    const [page, setPage] = useState('10');
+    const [filter, setFilter] = useState({ search: '', per_page: '10' });
     const debouncedSearch = useMemo(
         () =>
-            debounce((value: searchFIlter) => {
+            debounce((value: searchFilter) => {
                 router.get(
                     route(route().current() ?? ''),
                     { search: value.search, per_page: value.per_page },
@@ -68,14 +67,15 @@ export function DataTable<TData, TValue>({ columns, data, search, meta }: DataTa
     );
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = { per_page: page, ...(e.target.value && e.target.value !== '' && { search: e.target.value }) };
-        setQuery(value.search ?? '');
+        const value = { per_page: filter.per_page, ...(e.target.value && e.target.value !== '' && { search: e.target.value }) };
+
+        setFilter({ ...filter, search: value.search ?? '' });
         debouncedSearch(value);
     };
     const handleChange = (e: string) => {
         // console.log(e);
-        const value = { per_page: e, ...(query && query !== '' && { search: query }) };
-        setPage(value.per_page);
+        const value = { per_page: e, ...(filter.per_page && filter.search !== '' && { search: filter.search }) };
+        setFilter({ ...filter, per_page: value.per_page });
         router.get(
             route(route().current() ?? ''),
             { per_page: value.per_page, search: value.search },
@@ -107,7 +107,7 @@ export function DataTable<TData, TValue>({ columns, data, search, meta }: DataTa
     return (
         <>
             <div className="flex items-center py-4">
-                <Input placeholder={`Search ${search.placeholder}`} value={query} onChange={handleSearch} className="max-w-sm" />
+                <Input placeholder={`Search ${search.placeholder}`} value={filter.search} onChange={handleSearch} className="max-w-sm" />
             </div>
             <div className="rounded-md border">
                 <Table>

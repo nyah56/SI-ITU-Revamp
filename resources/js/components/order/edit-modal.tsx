@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { ComboboxDemo } from './combo';
 type ModalProps = {
@@ -24,12 +24,9 @@ type ModalProps = {
     };
     handleSubmit: () => void;
 };
-export function DialogComponent({ title, description, open, onOpenChange, comboBoxValue, onComboboxChange, comboKeyPair, handleSubmit }: ModalProps) {
+export function EditModal({ title, description, open, onOpenChange, comboBoxValue, onComboboxChange, comboKeyPair, handleSubmit }: ModalProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogTrigger asChild>
-                <Button variant="outline">New</Button>
-            </DialogTrigger>
             <DialogContent className="sm:max-w-[768px]" onOpenAutoFocus={(e) => e.preventDefault()}>
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>

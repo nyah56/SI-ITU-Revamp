@@ -21,7 +21,7 @@ type Meta = {
     select: (value: string) => void;
 };
 const ConditionalRendering = (condition: boolean, template: React.ReactNode, icon: React.ReactNode) => {
-    console.log();
+    // console.log();
     if (!condition) {
         return template;
     }

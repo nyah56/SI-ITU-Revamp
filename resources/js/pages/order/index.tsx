@@ -5,9 +5,10 @@ import { Order, columns } from '../../components/order/columns';
 // import DialogComponent from './modal';
 import { router, usePage } from '@inertiajs/react';
 
+import { CreateModal } from '@/components/order/create-modal';
 import axios from 'axios';
 import { SetStateAction, useEffect, useState } from 'react';
-import { DialogComponent } from '../../components/order/modal';
+import { EditModal } from '../../components/order/edit-modal';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Order',
@@ -149,8 +150,8 @@ export default function DemoPage() {
                 <div className="flex flex-col gap-4">
                     <div className="flex justify-between">
                         <h2>{breadcrumbs[0].title} List</h2>
-                        <DialogComponent {...createDialog}></DialogComponent>
-                        <DialogComponent {...editDialog}></DialogComponent>
+                        <CreateModal {...createDialog}></CreateModal>
+                        <EditModal {...editDialog}></EditModal>
                     </div>
 
                     <DataTable meta={orders.meta} columns={columns(handleEditClick, handleDelete)} data={orders.data} search={searchColumn} />
