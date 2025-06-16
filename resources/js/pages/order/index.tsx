@@ -7,7 +7,7 @@ import { router, usePage } from '@inertiajs/react';
 
 import { CreateModal } from '@/components/order/create-modal';
 import axios from 'axios';
-import { SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EditModal } from '../../components/order/edit-modal';
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -16,17 +16,24 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+type Consumer = {
+    id: string;
+    consumer_name: string;
+    phone: string | null;
+    email: string | null;
+    address: string | null;
+};
 export default function DemoPage() {
     const searchColumn = { placeholder: 'Consumer', filter: 'consumer_name' };
     const { orders } = usePage<{ orders: { data: Order[]; meta: Meta } }>().props;
-    const { consumers } = usePage<any>().props;
+    const { consumers } = usePage<{ consumers: Consumer[] }>().props;
     const [open, setOpen] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [combo, setCombo] = useState({
         consumer: '',
         status: '',
     });
-
+    // console.log(consumers);
     const [values, setValues] = useState({
         consumer_name: '',
         status: '',
@@ -46,16 +53,16 @@ export default function DemoPage() {
             setCombo({ consumer: '', status: '' });
         }
     }, [openEdit]);
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const key = e.target.id;
         const value = e.target.value;
         setValues((values) => ({
             ...values,
             [key]: value,
         }));
-    }
+    };
 
-    const handleConsumer = (e: SetStateAction<any>) => {
+    const handleConsumer = (e: string) => {
         setCombo({ ...combo, consumer: e });
         // setValues((values) => ({
         //     ...values,
@@ -66,7 +73,7 @@ export default function DemoPage() {
             consumer_name: e,
         }));
     };
-    const handleStatus = (e: SetStateAction<any>) => {
+    const handleStatus = (e: string) => {
         setCombo({ ...combo, status: e });
 
         setValues((values) => ({
@@ -89,20 +96,20 @@ export default function DemoPage() {
         { value: 'completed', label: 'Completed' },
         { value: 'cancelled', label: 'Cancelled' },
     ];
-    const data = consumers.map((i: Order) => ({
+    const data = consumers.map((i: Consumer) => ({
         value: i.id,
         label: i.consumer_name,
     }));
 
-    const handleEditClick = async (id: number) => {
+    const handleEditClick = async (id: Order['id']) => {
         setId(id);
         // console.log(id);
         const response = await axios.get(`/order/${id}`);
         const result = response.data;
         const getCombo = data.find((item: { value: string }) => item.value === result.consumer_id);
-        // console.log(getCombo.value);
+        // console.log(getCombo?.value);
         // setCombo(getCombo.value);
-        setCombo({ consumer: getCombo.value, status: result.status });
+        setCombo({ consumer: getCombo?.value ?? '', status: result.status });
 
         setOpenEdit(true);
         setValues({ consumer_name: result.consumer_id, status: result.status });
@@ -115,7 +122,7 @@ export default function DemoPage() {
         // alert(JSON.stringify(values));
     };
 
-    const handleDelete = async (id: any) => {
+    const handleDelete = async (id: Order['id']) => {
         // console.log(id);
 
         router.delete(route('order.destroy', id));

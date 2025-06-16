@@ -58,7 +58,7 @@ export default function DemoPage() {
         // alert(JSON.stringify(values));
     };
     const [id, setId] = useState<number | undefined>();
-    const handleEditClick = async (id: number) => {
+    const handleEditClick = async (id: Product['id']) => {
         console.log(id);
         setId(id);
         const res = await axios.get(`/product/${id}`);
@@ -74,7 +74,7 @@ export default function DemoPage() {
         setOpenEdit(false);
         // alert(JSON.stringify(values));
     };
-    const handleDelete = async (id: any) => {
+    const handleDelete = async (id: Product['id']) => {
         // console.log(id);
 
         router.delete(route('product.destroy', id));

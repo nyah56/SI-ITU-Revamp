@@ -54,7 +54,7 @@ export default function DemoPage() {
         // alert(JSON.stringify(values));
     };
     const [id, setId] = useState<number | undefined>();
-    const handleEditClick = async (id: number) => {
+    const handleEditClick = async (id: Farmer['id']) => {
         setId(id);
         const res = await axios.get(`/farmer/${id}`);
         const data = res.data;
@@ -70,7 +70,7 @@ export default function DemoPage() {
         // alert(JSON.stringify(values));
     };
 
-    const handleDelete = async (id: any) => {
+    const handleDelete = async (id: Farmer['id']) => {
         // console.log(id);
 
         router.delete(route('farmer.destroy', id));

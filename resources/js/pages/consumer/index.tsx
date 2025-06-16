@@ -54,7 +54,7 @@ export default function DemoPage() {
         // alert(JSON.stringify(values));
     };
     const [id, setId] = useState<number | undefined>();
-    const handleEditClick = async (id: number) => {
+    const handleEditClick = async (id: Consumer['id']) => {
         setId(id);
         const res = await axios.get(`/consumer/${id}`);
         const data = res.data;
@@ -70,7 +70,7 @@ export default function DemoPage() {
         // alert(JSON.stringify(values));
     };
 
-    const handleDelete = async (id: any) => {
+    const handleDelete = async (id: Consumer['id']) => {
         // console.log(id);
 
         router.delete(route('consumer.destroy', id));

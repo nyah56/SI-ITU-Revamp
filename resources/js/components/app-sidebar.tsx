@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Box, LayoutGrid, Tractor, Users } from 'lucide-react';
+import { Box, LayoutGrid, Receipt, Tractor, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -26,6 +26,11 @@ const mainNavItems: NavItem[] = [
         title: 'Farmer',
         href: '/farmer',
         icon: Tractor,
+    },
+    {
+        title: 'Order',
+        href: '/order',
+        icon: Receipt,
     },
 ];
 
