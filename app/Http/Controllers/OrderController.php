@@ -27,6 +27,7 @@ class OrderController extends Controller
         $orders   = OrderResource::collection($query->with('consumer')->orderBy('id', 'asc')->paginate($per_page)->withQueryString());
 
         $consumers = ConsumerResource::collection(Consumer::select('id', 'consumer_name')->get());
+
         return Inertia::render('order/index', compact('orders', 'consumers'));
     }
 
